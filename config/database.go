@@ -17,7 +17,8 @@ func ConnectDB() {
 		panic("Gagal konek ke database...")
 	}
 
-	database.AutoMigrate(&models.Room{}, &models.Reservation{})
+	//untuk membuat table db secara otomatis
+	database.AutoMigrate(&models.Room{}, &models.Reservation{}, &models.User{})
 	DB = database
 	fmt.Println("✅ Database Connected & Migrated!")
 }

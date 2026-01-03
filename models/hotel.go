@@ -31,6 +31,25 @@ type Room struct {
 	Price  float64  `json:"price"`
 }
 
+type User struct {
+	Base
+	Username string `json:"username" gorm:"unique"`
+	Email    string `json:"email" gorm:"unique"`
+	// json:"-" artinya: "Field ini ada di database, TAPI jangan pernah dikirim ke JSON output"
+	Password string   `json:"-"`
+	Role     UserRole `json:"role" gorm:"type:varchar(20);default:'GUEST'"`
+}
+
+type UserRole string
+
+const (
+	RoleGuest        UserRole = "GUEST"
+	RoleReceptionist UserRole = "RECEPTIONIST"
+	RoleChef         UserRole = "CHEF"
+	RoleManager      UserRole = "MANAGER"
+	RoleMasterAdmin  UserRole = "MASTER ADMIN"
+)
+
 func (r *Room) BeforeCreate(tx *gorm.DB) (err error) {
 	if len(r.ID) == 0 {
 		r.ID = uuid.New().String()
@@ -56,6 +75,13 @@ type Reservation struct {
 func (res *Reservation) BeforeCreate(tx *gorm.DB) (err error) {
 	if len(res.ID) == 0 {
 		res.ID = uuid.New().String()
+	}
+	return
+}
+
+func (usr *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if len(usr.ID) == 0 {
+		usr.ID = uuid.New().String()
 	}
 	return
 }
